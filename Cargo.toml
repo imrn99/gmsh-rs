@@ -1,0 +1,10 @@
+[package]
+name = "gmsh-parser"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "lib.rs"
+
+[build-dependencies]
+pkg-config = "0.3.32"
