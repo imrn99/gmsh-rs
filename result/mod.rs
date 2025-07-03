@@ -130,3 +130,18 @@ pub unsafe fn gmsh_write(file_name: *const raw::c_char) -> GmshRawResult<()> {
         Err(GmshRawError(err))
     }
 }
+
+pub unsafe fn gmsh_clear() -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshClear(ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
+}
