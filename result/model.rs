@@ -35,112 +35,248 @@ pub unsafe fn gmsh_model_remove() -> GmshRawResult<()> {
     }
 }
 
-pub unsafe fn gmsh_model_list(
-    names: *mut *mut *mut raw::c_char,
-    names_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_list() -> GmshRawResult<(*const *const raw::c_char, usize)> {
+    let mut value: *mut *mut raw::c_char = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let names = (&mut value) as *mut *mut *mut raw::c_char;
+        let names_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelList(names, names_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value as *const *const raw::c_char, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_current(
-    name: *mut *mut raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_get_current() -> GmshRawResult<*mut raw::c_char> {
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let name = (&mut value) as *mut *mut raw::c_char;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetCurrent(name, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_set_current(
-    name: *const raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_set_current(name: *const raw::c_char) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetCurrent(name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_file_name(
-    file_name: *mut *mut raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_get_file_name() -> GmshRawResult<*mut raw::c_char> {
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let file_name = (&mut value) as *mut *mut raw::c_char;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetCurrent(file_name, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_set_file_name(
-    file_name: *const raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_set_file_name(file_name: *const raw::c_char) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetFileName(file_name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_entities(
-    dim_tags: *mut *mut raw::c_int,
-    dim_tags_n: *mut usize,
     dim: raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let dim_tags = (&mut value) as *mut *mut raw::c_int;
+        let dim_tags_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntities(dim_tags, dim_tags_n, dim, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_entity_name(
     dim: raw::c_int,
     tag: raw::c_int,
     name: *const raw::c_char,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetEntityName(dim, tag, name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_entity_name(
     dim: raw::c_int,
     tag: raw::c_int,
-    name: *mut *mut raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<*mut raw::c_char> {
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let name = (&mut value) as *mut *mut raw::c_char;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntityName(dim, tag, name, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_remove_entity_name(
-    name: *const raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_remove_entity_name(name: *const raw::c_char) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetFileName(name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_physical_groups(
-    dim_tags: *mut *mut raw::c_int,
-    dim_tags_n: *mut usize,
     dim: raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let dim_tags = (&mut value) as *mut *mut raw::c_int;
+        let dim_tags_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntities(dim_tags, dim_tags_n, dim, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_entities_for_physical_group(
     dim: raw::c_int,
     tag: raw::c_int,
-    tags: *mut *mut raw::c_int,
-    tags_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let tags = (&mut value) as *mut *mut raw::c_int;
+        let tags_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntitiesForPhysicalGroup(dim, tag, tags, tags_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_entities_for_physical_name(
     name: *const raw::c_char,
-    dim_tags: *mut *mut raw::c_int,
-    dim_tags_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let dim_tags = (&mut value) as *mut *mut raw::c_int;
+        let dim_tags_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntitiesForPhysicalName(name, dim_tags, dim_tags_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_physical_groups_for_entity(
     dim: raw::c_int,
     tag: raw::c_int,
-    physical_tags: *mut *mut raw::c_int,
-    physical_tags_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let physical_tags = (&mut value) as *mut *mut raw::c_int;
+        let physical_tags_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetPhysicalGroupsForEntity(dim, tag, physical_tags, physical_tags_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_add_physical_group(
@@ -149,76 +285,167 @@ pub unsafe fn gmsh_model_add_physical_group(
     tags_n: usize,
     tag: raw::c_int,
     name: *const raw::c_char,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<raw::c_int> {
-    Ok(0)
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelAddPhysicalGroup(dim, tags, tags_n, tag, name, ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_remove_physical_groups(
     dim_tags: *const raw::c_int,
     dim_tags_n: usize,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelRemovePhysicalGroups(dim_tags, dim_tags_n, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_physical_name(
     dim: raw::c_int,
     tag: raw::c_int,
     name: *const raw::c_char,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetPhysicalName(dim, tag, name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_physical_name(
     dim: raw::c_int,
     tag: raw::c_int,
-    name: *mut *mut raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<*mut raw::c_char> {
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let name = (&mut value) as *mut *mut raw::c_char;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetPhysicalName(dim, tag, name, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_remove_physical_name(
-    name: *const raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_remove_physical_name(name: *const raw::c_char) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelRemovePhysicalName(name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_tag(
     dim: raw::c_int,
     tag: raw::c_int,
     new_tag: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetTag(dim, tag, new_tag, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_boundary(
     dim_tags: *const raw::c_int,
     dim_tags_n: usize,
-    out_dim_tags: *mut *mut raw::c_int,
-    out_dim_tags_n: *mut usize,
     combined: raw::c_int,
     oriented: raw::c_int,
     recursive: raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let out_dim_tags = (&mut value) as *mut *mut raw::c_int;
+        let out_dim_tags_n = (&mut count) as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetBoundary(
+            dim_tags,
+            dim_tags_n,
+            out_dim_tags,
+            out_dim_tags_n,
+            combined,
+            oriented,
+            recursive,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_adjacencies(
-    dim: raw::c_int,
-    tag: raw::c_int,
-    upward: *mut *mut raw::c_int,
-    upward_n: *mut usize,
-    downward: *mut *mut raw::c_int,
-    downward_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_get_adjacencies(dim: raw::c_int, tag: raw::c_int) -> GmshRawResult<()> {
+    let mut up: *mut raw::c_int = std::ptr::null_mut();
+    let mut up_count: usize = 0;
+    let mut down: *mut raw::c_int = std::ptr::null_mut();
+    let mut down_count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let upward = &mut up as *mut *mut raw::c_int;
+        let upward_n = &mut up_count as *mut usize;
+        let downward = &mut down as *mut *mut raw::c_int;
+        let downward_n = &mut down_count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetAdjacencies(dim, tag, upward, upward_n, downward, downward_n, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_entities_in_bounding_box(
@@ -228,30 +455,71 @@ pub unsafe fn gmsh_model_get_entities_in_bounding_box(
     xmax: f64,
     ymax: f64,
     zmax: f64,
-    dim_tags: *mut *mut raw::c_int,
-    dim_tags_n: *mut usize,
     dim: raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let dim_tags = (&mut value) as *mut *mut raw::c_int;
+        let dim_tags_n = (&mut count) as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetEntitiesInBoundingBox(
+            xmin, ymin, zmin, xmax, ymax, zmax, dim_tags, dim_tags_n, dim, ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_bounding_box(
     dim: raw::c_int,
     tag: raw::c_int,
-    xmin: *mut f64,
-    ymin: *mut f64,
-    zmin: *mut f64,
-    xmax: *mut f64,
-    ymax: *mut f64,
-    zmax: *mut f64,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<[(f64, f64); 3]> {
+    let mut xmin: f64 = 0.0;
+    let mut ymin: f64 = 0.0;
+    let mut zmin: f64 = 0.0;
+    let mut xmax: f64 = 0.0;
+    let mut ymax: f64 = 0.0;
+    let mut zmax: f64 = 0.0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let xmin: *mut f64 = &mut xmin as *mut f64;
+        let ymin: *mut f64 = &mut ymin as *mut f64;
+        let zmin: *mut f64 = &mut zmin as *mut f64;
+        let xmax: *mut f64 = &mut xmax as *mut f64;
+        let ymax: *mut f64 = &mut ymax as *mut f64;
+        let zmax: *mut f64 = &mut zmax as *mut f64;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetBoundingBox(dim, tag, xmin, ymin, zmin, xmax, ymax, zmax, ierr);
+    };
+
+    if err == 0 {
+        Ok([(xmin, xmax), (ymin, ymax), (zmin, zmax)])
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_dimension(ierr: *mut raw::c_int) -> GmshRawResult<raw::c_int> {
-    Ok(0)
+pub unsafe fn gmsh_model_get_dimension() -> GmshRawResult<raw::c_int> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetDimension(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_add_discrete_entity(
@@ -259,53 +527,117 @@ pub unsafe fn gmsh_model_add_discrete_entity(
     tag: raw::c_int,
     boundary: *const raw::c_int,
     boundary_n: usize,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<raw::c_int> {
-    Ok(0)
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelAddDiscreteEntity(dim, tag, boundary, boundary_n, ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_remove_entities(
     dim_tags: *const raw::c_int,
     dim_tags_n: usize,
     recursive: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelRemoveEntities(dim_tags, dim_tags_n, recursive, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_type(
     dim: raw::c_int,
     tag: raw::c_int,
-    entity_type: *mut *mut raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<*mut raw::c_char> {
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let entity_type = &mut value as *mut *mut raw::c_char;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetType(dim, tag, entity_type, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_parent(
     dim: raw::c_int,
     tag: raw::c_int,
-    parent_dim: *mut raw::c_int,
-    parent_tag: *mut raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(raw::c_int, raw::c_int)> {
+    let mut v1: raw::c_int = 0;
+    let mut v2: raw::c_int = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let parent_dim = &mut v1 as *mut raw::c_int;
+        let parent_tag = &mut v2 as *mut raw::c_int;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetParent(dim, tag, parent_dim, parent_tag, ierr);
+    };
+
+    if err == 0 {
+        Ok((v1, v2))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_number_of_partitions(
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<raw::c_int> {
-    Ok(0)
+pub unsafe fn gmsh_model_get_number_of_partitions() -> GmshRawResult<raw::c_int> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetNumberOfPartitions(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_partitions(
     dim: raw::c_int,
     tag: raw::c_int,
-    partitions: *mut *mut raw::c_int,
-    partitions_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const raw::c_int, usize)> {
+    let mut value: *mut raw::c_int = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let partitions = &mut value as *mut *mut raw::c_int;
+        let partitions_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetPartitions(dim, tag, partitions, partitions_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_value(
@@ -313,11 +645,31 @@ pub unsafe fn gmsh_model_get_value(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    coord: *mut *mut f64,
-    coord_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let coord = &mut value as *mut *mut f64;
+        let coord_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetValue(
+            dim,
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            coord,
+            coord_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_derivative(
@@ -325,11 +677,31 @@ pub unsafe fn gmsh_model_get_derivative(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    derivatives: *mut *mut f64,
-    derivatives_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let derivatives = &mut value as *mut *mut f64;
+        let derivatives_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetDerivative(
+            dim,
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            derivatives,
+            derivatives_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_second_derivative(
@@ -337,11 +709,31 @@ pub unsafe fn gmsh_model_get_second_derivative(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    derivatives: *mut *mut f64,
-    derivatives_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let derivatives = &mut value as *mut *mut f64;
+        let derivatives_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetSecondDerivative(
+            dim,
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            derivatives,
+            derivatives_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_curvature(
@@ -349,39 +741,114 @@ pub unsafe fn gmsh_model_get_curvature(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    curvatures: *mut *mut f64,
-    curvatures_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let curvatures = &mut value as *mut *mut f64;
+        let curvatures_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetCurvature(
+            dim,
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            curvatures,
+            curvatures_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_principal_curvatures(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    curvature_max: *mut *mut f64,
-    curvature_max_n: *mut usize,
-    curvature_min: *mut *mut f64,
-    curvature_min_n: *mut usize,
-    direction_max: *mut *mut f64,
-    direction_max_n: *mut usize,
-    direction_min: *mut *mut f64,
-    direction_min_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<[(*const f64, usize); 4]> {
+    let mut curvature_max: *mut f64 = std::ptr::null_mut();
+    let mut curvature_max_n: usize = 0;
+    let mut curvature_min: *mut f64 = std::ptr::null_mut();
+    let mut curvature_min_n: usize = 0;
+    let mut direction_max: *mut f64 = std::ptr::null_mut();
+    let mut direction_max_n: usize = 0;
+    let mut direction_min: *mut f64 = std::ptr::null_mut();
+    let mut direction_min_n: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let curvature_max = &mut curvature_max as *mut *mut f64;
+        let curvature_max_n = &mut curvature_max_n as *mut usize;
+        let curvature_min = &mut curvature_min as *mut *mut f64;
+        let curvature_min_n = &mut curvature_min_n as *mut usize;
+        let direction_max = &mut direction_max as *mut *mut f64;
+        let direction_max_n = &mut direction_max_n as *mut usize;
+        let direction_min = &mut direction_min as *mut *mut f64;
+        let direction_min_n = &mut direction_min_n as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetPrincipalCurvatures(
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            curvature_max,
+            curvature_max_n,
+            curvature_min,
+            curvature_min_n,
+            direction_max,
+            direction_max_n,
+            direction_min,
+            direction_min_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok([
+            (curvature_max, curvature_max_n),
+            (curvature_min, curvature_min_n),
+            (direction_max, direction_max_n),
+            (direction_min, direction_min_n),
+        ])
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_normal(
     tag: raw::c_int,
     parametric_coord: *const f64,
     parametric_coord_n: usize,
-    normals: *mut *mut f64,
-    normals_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let normals = &mut value as *mut *mut f64;
+        let normals_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetNormal(
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            normals,
+            normals_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_parametrization(
@@ -389,23 +856,57 @@ pub unsafe fn gmsh_model_get_parametrization(
     tag: raw::c_int,
     coord: *const f64,
     coord_n: usize,
-    parametric_coord: *mut *mut f64,
-    parametric_coord_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let parametric_coord = &mut value as *mut *mut f64;
+        let parametric_coord_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetParametrization(
+            dim,
+            tag,
+            coord,
+            coord_n,
+            parametric_coord,
+            parametric_coord_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_parametrization_bounds(
     dim: raw::c_int,
     tag: raw::c_int,
-    min: *mut *mut f64,
-    min_n: *mut usize,
-    max: *mut *mut f64,
-    max_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<[(*const f64, usize); 2]> {
+    let mut max: *mut f64 = std::ptr::null_mut();
+    let mut max_n: usize = 0;
+    let mut min: *mut f64 = std::ptr::null_mut();
+    let mut min_n: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let max = &mut max as *mut *mut f64;
+        let max_n = &mut max_n as *mut usize;
+        let min = &mut min as *mut *mut f64;
+        let min_n = &mut min_n as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetParametrizationBounds(dim, tag, max, max_n, min, min_n, ierr);
+    };
+
+    if err == 0 {
+        Ok([(max, max_n), (min, min_n)])
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_is_inside(
@@ -414,9 +915,19 @@ pub unsafe fn gmsh_model_is_inside(
     coord: *const f64,
     coord_n: usize,
     parametric: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<raw::c_int> {
-    Ok(0)
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelIsInside(dim, tag, coord, coord_n, parametric, ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_closest_point(
@@ -424,13 +935,40 @@ pub unsafe fn gmsh_model_get_closest_point(
     tag: raw::c_int,
     coord: *const f64,
     coord_n: usize,
-    closest_coord: *mut *mut f64,
-    closest_coord_n: *mut usize,
-    parametric_coord: *mut *mut f64,
-    parametric_coord_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<[(*const f64, usize); 2]> {
+    let mut closest_coord: *mut f64 = std::ptr::null_mut();
+    let mut closest_coord_n: usize = 0;
+    let mut parametric_coord: *mut f64 = std::ptr::null_mut();
+    let mut parametric_coord_n: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let closest_coord = &mut closest_coord as *mut *mut f64;
+        let closest_coord_n = &mut closest_coord_n as *mut usize;
+        let parametric_coord = &mut parametric_coord as *mut *mut f64;
+        let parametric_coord_n = &mut parametric_coord_n as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetClosestPoint(
+            dim,
+            tag,
+            coord,
+            coord_n,
+            closest_coord,
+            closest_coord_n,
+            parametric_coord,
+            parametric_coord_n,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok([
+            (closest_coord, closest_coord_n),
+            (parametric_coord, parametric_coord_n),
+        ])
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_reparametrize_on_surface(
@@ -439,12 +977,34 @@ pub unsafe fn gmsh_model_reparametrize_on_surface(
     parametric_coord: *const f64,
     parametric_coord_n: usize,
     surface_tag: raw::c_int,
-    surface_parametric_coord: *mut *mut f64,
-    surface_parametric_coord_n: *mut usize,
     which: raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*mut f64, usize)> {
+    let mut value: *mut f64 = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let surface_parametric_coord = &mut value as *mut *mut f64;
+        let surface_parametric_coord_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelReparametrizeOnSurface(
+            dim,
+            tag,
+            parametric_coord,
+            parametric_coord_n,
+            surface_tag,
+            surface_parametric_coord,
+            surface_parametric_coord_n,
+            which,
+            ierr,
+        );
+    };
+
+    if err == 0 {
+        Ok((value, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_visibility(
@@ -452,26 +1012,57 @@ pub unsafe fn gmsh_model_set_visibility(
     dim_tags_n: usize,
     value: raw::c_int,
     recursive: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetVisibility(dim_tags, dim_tags_n, value, recursive, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_visibility(
     dim: raw::c_int,
     tag: raw::c_int,
-    value: *mut raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<raw::c_int> {
+    let mut value: raw::c_int = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let value = &mut value as *mut raw::c_int;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetVisibility(dim, tag, value, ierr);
+    };
+
+    if err == 0 {
+        Ok(value)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_visibility_per_window(
     value: raw::c_int,
     window_index: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetVisibilityPerWindow(value, window_index, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_color(
@@ -482,21 +1073,45 @@ pub unsafe fn gmsh_model_set_color(
     b: raw::c_int,
     a: raw::c_int,
     recursive: raw::c_int,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetColor(dim_tags, dim_tags_n, r, g, b, a, recursive, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_color(
     dim: raw::c_int,
     tag: raw::c_int,
-    r: *mut raw::c_int,
-    g: *mut raw::c_int,
-    b: *mut raw::c_int,
-    a: *mut raw::c_int,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<[raw::c_int; 4]> {
+    let mut r: raw::c_int = 0;
+    let mut g: raw::c_int = 0;
+    let mut b: raw::c_int = 0;
+    let mut a: raw::c_int = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let r = &mut r as *mut raw::c_int;
+        let g = &mut g as *mut raw::c_int;
+        let b = &mut b as *mut raw::c_int;
+        let a = &mut a as *mut raw::c_int;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetColor(dim, tag, r, g, b, a, ierr);
+    };
+
+    if err == 0 {
+        Ok([r, g, b, a])
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_coordinates(
@@ -504,42 +1119,94 @@ pub unsafe fn gmsh_model_set_coordinates(
     x: f64,
     y: f64,
     z: f64,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetCoordinates(tag, x, y, z, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_set_attribute(
     name: *const raw::c_char,
     values: *const *const raw::c_char,
     values_n: usize,
-    ierr: *mut raw::c_int,
 ) -> GmshRawResult<()> {
-    Ok(())
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelSetAttribute(name, values, values_n, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 pub unsafe fn gmsh_model_get_attribute(
     name: *const raw::c_char,
-    values: *mut *mut *mut raw::c_char,
-    values_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+) -> GmshRawResult<(*const *const raw::c_char, usize)> {
+    let mut value: *mut *mut raw::c_char = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let values = &mut value as *mut *mut *mut raw::c_char;
+        let values_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetAttribute(name, values, values_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value as *const *const raw::c_char, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_get_attribute_names(
-    names: *mut *mut *mut raw::c_char,
-    names_n: *mut usize,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_get_attribute_names() -> GmshRawResult<(*const *const raw::c_char, usize)>
+{
+    let mut value: *mut *mut raw::c_char = std::ptr::null_mut();
+    let mut count: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let values = &mut value as *mut *mut *mut raw::c_char;
+        let values_n = &mut count as *mut usize;
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelGetAttributeNames(values, values_n, ierr);
+    };
+
+    if err == 0 {
+        Ok((value as *const *const raw::c_char, count))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_model_remove_attribute(
-    name: *const raw::c_char,
-    ierr: *mut raw::c_int,
-) -> GmshRawResult<()> {
-    Ok(())
+pub unsafe fn gmsh_model_remove_attribute(name: *const raw::c_char) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshModelRemoveAttribute(name, ierr);
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
 /* gmsh/model/mesh namespace */

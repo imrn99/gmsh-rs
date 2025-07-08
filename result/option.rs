@@ -55,16 +55,15 @@ pub unsafe fn gmsh_option_set_string(
     }
 }
 
-pub unsafe fn gmsh_option_get_string(
-    name: *const raw::c_char,
-) -> GmshRawResult<*mut *mut raw::c_char> {
+pub unsafe fn gmsh_option_get_string(name: *const raw::c_char) -> GmshRawResult<*mut raw::c_char> {
     // God willing, their retarded API isn't going to make us deref into oblivion
-    let value: *mut *mut raw::c_char = std::ptr::dangling_mut::<*mut raw::c_char>();
+    let mut value: *mut raw::c_char = std::ptr::null_mut();
     let mut err: raw::c_int = 0;
 
     unsafe {
+        let v = (&mut value) as *mut *mut raw::c_char;
         let ierr = &mut err as *mut raw::c_int;
-        sys::gmshOptionGetString(name, value, ierr);
+        sys::gmshOptionGetString(name, v, ierr);
     };
 
     if err == 0 {
