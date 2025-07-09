@@ -480,7 +480,7 @@ pub unsafe fn gmsh_model_get_entities_in_bounding_box(
 pub unsafe fn gmsh_model_get_bounding_box(
     dim: raw::c_int,
     tag: raw::c_int,
-) -> GmshRawResult<[(f64, f64); 3]> {
+) -> GmshRawResult<((f64, f64, f64), (f64, f64, f64))> {
     let mut xmin: f64 = 0.0;
     let mut ymin: f64 = 0.0;
     let mut zmin: f64 = 0.0;
@@ -501,7 +501,7 @@ pub unsafe fn gmsh_model_get_bounding_box(
     };
 
     if err == 0 {
-        Ok([(xmin, xmax), (ymin, ymax), (zmin, zmax)])
+        Ok(((xmin, ymin, zmin), (xmax, ymax, zmax)))
     } else {
         Err(GmshRawError(err))
     }
