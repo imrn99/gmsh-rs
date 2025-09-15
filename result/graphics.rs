@@ -5,6 +5,14 @@ use std::os::raw;
 use crate::result::{GmshRawError, GmshRawResult};
 use crate::sys;
 
-pub unsafe fn gmsh_graphics_draw(ierr: *mut raw::c_int) {
-    todo!()
+pub unsafe fn gmsh_graphics_draw() -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe { sys::gmshGraphicsDraw(&mut err) };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }

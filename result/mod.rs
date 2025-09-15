@@ -1,3 +1,20 @@
+//! Unsafe wrapper API
+//!
+//! The functions in this module are wrappers around functions of the [crate::sys] module. They serve two purpose:
+//!
+//! - switch back to Rust's naming convention
+//! - move mutable pointers passed as argument to proper return values
+//!
+//! <div class="warning">
+//!
+//! These functions are still marked as unsafe as they require manipulating raw C types.
+//!
+//! </div>
+
+#![allow(clippy::missing_safety_doc)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::type_complexity)]
+
 pub mod option;
 
 pub mod model;

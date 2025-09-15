@@ -6,48 +6,142 @@ use crate::result::{GmshRawError, GmshRawResult};
 use crate::sys;
 
 pub unsafe fn gmsh_logger_write(
-    message: *const ::std::os::raw::c_char,
-    level: *const ::std::os::raw::c_char,
-    ierr: *mut ::std::os::raw::c_int,
-) {
-    todo!()
+    message: *const raw::c_char,
+    level: *const raw::c_char,
+) -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerWrite(message, level, ierr)
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_start(ierr: *mut ::std::os::raw::c_int) {
-    todo!()
+pub unsafe fn gmsh_logger_start() -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerStart(ierr)
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get(
-    log: *mut *mut *mut ::std::os::raw::c_char,
-    log_n: *mut usize,
-    ierr: *mut ::std::os::raw::c_int,
-) {
-    todo!()
+pub unsafe fn gmsh_logger_get() -> GmshRawResult<(*mut *mut raw::c_char, usize)> {
+    let mut log: *mut *mut raw::c_char = std::ptr::null_mut();
+    let mut log_n: usize = 0;
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGet(&mut log, &mut log_n, ierr)
+    };
+
+    if err == 0 {
+        Ok((log, log_n))
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_stop(ierr: *mut ::std::os::raw::c_int) {
-    todo!()
+pub unsafe fn gmsh_logger_stop() -> GmshRawResult<()> {
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerStop(ierr)
+    };
+
+    if err == 0 {
+        Ok(())
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get_wall_time(ierr: *mut ::std::os::raw::c_int) -> f64 {
-    todo!()
+pub unsafe fn gmsh_logger_get_wall_time() -> GmshRawResult<f64> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGetWallTime(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get_cpu_time(ierr: *mut ::std::os::raw::c_int) -> f64 {
-    todo!()
+pub unsafe fn gmsh_logger_get_cpu_time() -> GmshRawResult<f64> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGetCpuTime(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get_memory(ierr: *mut ::std::os::raw::c_int) -> f64 {
-    todo!()
+pub unsafe fn gmsh_logger_get_memory() -> GmshRawResult<f64> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGetMemory(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get_total_memory(ierr: *mut ::std::os::raw::c_int) -> f64 {
-    todo!()
+pub unsafe fn gmsh_logger_get_total_memory() -> GmshRawResult<f64> {
+    let mut err: raw::c_int = 0;
+
+    let res = unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGetTotalMemory(ierr)
+    };
+
+    if err == 0 {
+        Ok(res)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
 
-pub unsafe fn gmsh_logger_get_last_error(
-    error: *mut *mut ::std::os::raw::c_char,
-    ierr: *mut ::std::os::raw::c_int,
-) {
-    todo!()
+pub unsafe fn gmsh_logger_get_last_error() -> GmshRawResult<*mut raw::c_char> {
+    let mut error: *mut raw::c_char = std::ptr::null_mut();
+    let mut err: raw::c_int = 0;
+
+    unsafe {
+        let ierr = &mut err as *mut raw::c_int;
+        sys::gmshLoggerGetLastError(&mut error, ierr)
+    };
+
+    if err == 0 {
+        Ok(error)
+    } else {
+        Err(GmshRawError(err))
+    }
 }
