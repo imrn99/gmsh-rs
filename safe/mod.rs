@@ -1,126 +1,44 @@
 // introduce as much strong typing as possible
 
-use std::ffi::CStr;
+pub mod logger;
+
+mod types;
+mod utils;
+
 use std::os::raw;
 
-pub struct Tag(pub i32);
+pub use types::*;
 
-pub enum Dim {
-    All = -1,
-    Vertex = 0,
-    Edge = 1,
-    Face = 2,
-    Volume = 3,
-}
+use crate::result;
 
-impl TryFrom<raw::c_int> for Dim {
-    type Error = &'static str;
-    fn try_from(value: raw::c_int) -> Result<Self, Self::Error> {
-        match value {
-            -1 => Ok(Self::All),
-            0 => Ok(Self::Vertex),
-            1 => Ok(Self::Edge),
-            2 => Ok(Self::Face),
-            3 => Ok(Self::Volume),
-            _ => Err("dim != ( -1 | 0 | 1 | 2 | 3 )"),
-        }
-    }
-}
+/// Initialize the Gmsh API. This must be called before any call to the other functions in the API.
+/// If `argc' and `argv' (or just `argv' in Python or Julia) are provided, they will be handled in
+/// the same way as the command line arguments in the Gmsh app. If `readConfigFiles' is set, read
+/// system Gmsh configuration files (gmshrc and gmsh-options). If `run' is set, run in the same way
+/// as the Gmsh app, either interactively or in batch mode depending on the command line arguments.
+/// If `run' is not set, initializing the API sets the options "General.AbortOnError" to 2 and
+/// "General.Terminal" to 1.
+pub fn gmsh_initialize(read_config_files: bool, run: bool) -> GmshResult<()> {
+    let args: Vec<_> = std::env::args().collect();
+    let mut raw_args: Vec<_> = args
+        .into_iter()
+        .map(|mut s| s.as_mut_ptr() as *mut raw::c_char)
+        .collect();
 
-pub struct Vertex {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-}
-
-impl From<(f64, f64, f64)> for Vertex {
-    fn from((x, y, z): (f64, f64, f64)) -> Self {
-        Self { x, y, z }
-    }
-}
-
-pub struct BoundingBox {
-    pub min: Vertex,
-    pub max: Vertex,
-}
-
-impl From<((f64, f64, f64), (f64, f64, f64))> for BoundingBox {
-    fn from((vmin, vmax): ((f64, f64, f64), (f64, f64, f64))) -> Self {
-        Self {
-            min: vmin.into(),
-            max: vmax.into(),
-        }
-    }
-}
-
-pub struct Color {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-    pub a: u8,
-}
-
-impl TryFrom<[raw::c_int; 4]> for Color {
-    type Error = std::num::TryFromIntError;
-    fn try_from([r, g, b, a]: [raw::c_int; 4]) -> Result<Self, Self::Error> {
-        Ok(Self {
-            r: u8::try_from(r)?,
-            g: u8::try_from(g)?,
-            b: u8::try_from(b)?,
-            a: u8::try_from(a)?,
-        })
-    }
-}
-
-// we have to handle vec with actual copies because Gmsh has a retarded API that
-// requires you to use their function (gmshFree) to deallocate returned data
-
-unsafe fn vec_from_metadata<T: Copy>((ptr, len): (*const T, usize)) -> Vec<T> {
-    unsafe { std::slice::from_raw_parts(ptr, len).to_vec() }
-}
-
-unsafe fn vec_vec_from_metadata<T: Copy>(
-    (ptr_data, ptr_lens, len): (*const *const T, *const usize, usize),
-) -> Vec<Vec<T>> {
-    let mut res = Vec::with_capacity(len);
     unsafe {
-        for i in 0..len {
-            let p = ptr_data.add(i);
-            let l = ptr_lens.add(i);
-            res.push(std::slice::from_raw_parts(*p, *l).to_vec());
-        }
+        result::gmsh_initialize(
+            raw_args.len() as i32,
+            raw_args.as_mut_ptr(),
+            read_config_files as i32,
+            run as i32,
+        )?;
     }
-    res
+
+    Ok(())
 }
 
-// what a shitshow
-
-unsafe fn string_from_ptr(ptr: *const raw::c_char) -> String {
-    unsafe { CStr::from_ptr(ptr).to_string_lossy().to_string() }
-}
-
-unsafe fn string_vec_from_metadata((ptr, len): (*const *const raw::c_char, usize)) -> Vec<String> {
-    let mut res = Vec::with_capacity(len);
-    unsafe {
-        for i in 0..len {
-            let p = ptr.add(i);
-            res.push(string_from_ptr(*p));
-        }
-    }
-    res
-}
-
-unsafe fn string_vec_vec_from_metadata(
-    (ptr_data, ptr_lens, len): (*const *const *const raw::c_char, *const usize, usize),
-) -> Vec<Vec<String>> {
-    let mut res = Vec::with_capacity(len);
-    unsafe {
-        // what a shitshow
-        for i in 0..len {
-            let p = ptr_data.add(i);
-            let l = ptr_lens.add(i);
-            res.push(string_vec_from_metadata((*p, *l)));
-        }
-    }
-    res
+/// Return `true` if the Gmsh API is initialized, `false` if not.
+pub fn gmsh_is_initialized() -> GmshResult<bool> {
+    let res = unsafe { result::gmsh_is_initialized()? };
+    Ok(!res == 0)
 }
